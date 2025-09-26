@@ -1,0 +1,113 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Body Language Feedback - YouTube Demo</title>
+  <link rel = "stylesheet" href="styles.css">
+</link>
+</head>
+<body>
+
+  <h1>AI Body Language Feedback (YouTube Demo)</h1>
+
+  <div id="video-container">
+    <div id="player"></div>
+  </div>
+
+  <div id="alerts">⚠ No feedback yet...</div>
+
+  <div class="controls">
+    <button class="start-btn" onclick="startDemo()">Start Demo</button>
+    <button class="end-btn" onclick="endDemo()">End Demo</button>
+  </div>
+
+  <div class="summary" id="summary">
+    <h3>Session Summary</h3>
+    <p>Eye Contact: <span id="eyeScore">--</span>%</p>
+    <p>Posture: <span id="postureScore">--</span>/100</p>
+    <p>Engagement: <span id="engagement">--</span></p>
+    <p><b>Suggestions:</b> <span id="suggestions">--</span></p>
+    <button class="download-btn" onclick="downloadReport()">Download Report</button>
+  </div>
+
+  <script src="https://www.youtube.com/iframe_api"></script>
+
+  <script>
+    let player;
+    let demoInterval;
+    const alerts = document.getElementById("alerts");
+    const summaryBox = document.getElementById("summary");
+
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('player', {
+        height: '360',
+        width: '640',
+        videoId: 'oD5J1a3XU48',
+        events: {
+          'onReady': (event) => {
+            console.log("YouTube player ready");
+          }
+        }
+      });
+    }
+
+    function startDemo() {
+      alerts.textContent = "✅ Demo Started. Playing video...";
+      summaryBox.style.display = "none";
+      player.playVideo();
+
+      if (demoInterval) clearInterval(demoInterval);
+
+      
+      let timeline = [
+        { time: 5, message: "✅ Good Eye Contact" },
+        { time: 10, message: "✅ Good Posture" },
+        { time: 15, message: "⚠ No Eye Contact" },
+        { time: 20, message: "✅ Engaged" },
+        { time: 25, message: "⚠ Looking Away" }
+      ];
+
+      demoInterval = setInterval(() => {
+        if (player && player.getCurrentTime) {
+          let current = Math.floor(player.getCurrentTime());
+          timeline.forEach(event => {
+            if (current === event.time) {
+              alerts.textContent = event.message;
+            }
+          });
+        }
+      }, 1000);
+    }
+
+    function endDemo() {
+      if (player) player.pauseVideo();
+      clearInterval(demoInterval);
+      alerts.textContent = "✅ Demo Ended.";
+    
+      document.getElementById("eyeScore").textContent = "65";
+      document.getElementById("postureScore").textContent = "78";
+      document.getElementById("engagement").textContent = "Medium";
+      document.getElementById("suggestions").textContent =
+        "Improve consistency in eye contact, avoid leaning too much.";
+      summaryBox.style.display = "block";
+    }
+
+    function downloadReport() {
+      const text = `
+      AI Body Language Feedback Report
+      Eye Contact: ${document.getElementById("eyeScore").textContent}%
+      Posture Score: ${document.getElementById("postureScore").textContent}/100
+      Engagement Level: ${document.getElementById("engagement").textContent}
+      Suggestions: ${document.getElementById("suggestions").textContent}
+      `;
+      const blob = new Blob([text], { type: "text/plain" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "session_report.txt";
+      link.click();
+    }
+  </script>
+
+</body>
+</html>
