@@ -12,7 +12,7 @@ function startDemo() {
   if (demoInterval) clearInterval(demoInterval);
 
   const timeline = [
-    { time: 3, message: "⚠ good Eye Contact" },
+    { time: 3, message: "⚠ No Eye Contact" },
     { time: 7, message: "✅ Good Posture" },
     { time: 12, message: "⚠ Slouching Detected" },
     { time: 18, message: "✅ Engaged" },
@@ -60,3 +60,4 @@ Suggestions: ${document.getElementById("suggestions").textContent}
   link.click();
 
 }
+
